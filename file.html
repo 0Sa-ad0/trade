@@ -1,27 +1,110 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TradingView Widget</title>
+    <title>Economic Calendar</title>
     <style>
-        /* Add styles to center the widget */
         body {
             display: flex;
-            justify-content: center;
+            flex-direction: column;
+            justify-content: space-between;
             align-items: center;
-            height: 100vh; /* Full viewport height */
-            margin: 0; /* Remove any default margins */
-            background-color: #000; /* Optional: Set a background color */
+            height: 100vh;
+            margin: 0;
+            background-color: #000;
+            color: white;
+            font-family: Arial, sans-serif;
+        }
+
+        /* Header styling */
+        header {
+            font-size: 50px;
+            font-family: 'Times New Roman', Times, serif;
+            margin-top: 20px;
+        }
+
+        .time-container {
+            margin-bottom: 10px;
+            text-align: center;
+        }
+
+        .time {
+            font-size: 1.5rem;
+            margin: 5px 0;
+            font-family: 'Times New Roman', Times, serif;
         }
 
         .tradingview-widget-container {
             text-align: center;
         }
+
+        /* Footer styling */
+        footer {
+            font-size: 20px;
+            font-family: 'Times New Roman', Times, serif;
+            margin-bottom: 20px;
+        }
+
+        /* Modal styling */
+        #popupModal {
+            display: block;
+            /* Initially show the modal */
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: rgb(0, 0, 0);
+            padding: 20px;
+            border-radius: 8px;
+            text-align: center;
+            z-index: 1000;
+            border: 2px solid white;
+            /* Added white border */
+        }
+
+
+        #popupModal button {
+            margin-top: 10px;
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+            background-color: rgb(255, 0, 0);
+            text-emphasis-color: black;
+        }
+
+        #popupModal p {
+            color: rgb(255, 255, 255);
+        }
+
+        /* Backdrop styling */
+        #modalBackdrop {
+            display: block;
+            /* Initially show the backdrop */
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 999;
+        }
     </style>
 </head>
+
 <body>
+
+    <!-- Header -->
+    <header>Economic Calendar</header>
+
+    <!-- Time Display -->
+    <div class="time-container">
+        <div class="time" id="utcTime">UTC Time: </div>
+        <div class="time" id="utcPlus6Time">UTC +6 Time: </div>
+    </div>
+
     <!-- TradingView Widget BEGIN -->
     <div class="tradingview-widget-container">
         <div class="tradingview-widget-container__widget"></div>
@@ -31,17 +114,75 @@
             </a>
         </div>
         <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-events.js" async>
-        {
-            "colorTheme": "dark",
-            "isTransparent": false,
-            "width": "400",
-            "height": "550",
-            "locale": "en",
-            "importanceFilter": "0,1",
-            "countryFilter": "ar,au,br,ca,cn,fr,de,in,id,it,jp,kr,mx,ru,sa,za,tr,gb,us,eu"
-        }
+            {
+                "colorTheme": "dark",
+                    "isTransparent": false,
+                        "width": "400",
+                            "height": "550",
+                                "locale": "en",
+                                    "importanceFilter": "0,1",
+                                        "countryFilter": "ar,au,br,ca,cn,fr,de,in,id,it,jp,kr,mx,ru,sa,za,tr,gb,us,eu"
+            }
         </script>
     </div>
     <!-- TradingView Widget END -->
+
+    <!-- Footer -->
+    <footer>
+        Powered by<a href="https://www.tradingview.com" target="_blank"
+            style="color: rgb(140, 0, 255); text-decoration: none;">
+            TradingView.com
+        </a>
+    </footer>
+
+    <!-- Popup Modal -->
+    <div id="modalBackdrop"></div>
+    <div id="popupModal">
+        <p>You need internet to get refreshed of TradingView widget</p>
+        <button id="closeModalBtn">OK</button>
+    </div>
+
+    <!-- JavaScript to update the time and control popup -->
+    <script>
+        function updateTime() {
+            // Get the current time in UTC
+            let now = new Date();
+            let utcTime = new Date(now.toUTCString());
+
+            // Calculate UTC +6 time
+            let utcPlus6Time = new Date(now.toUTCString());
+            utcPlus6Time.setHours(utcPlus6Time.getHours() + 6);
+
+            // Format options for time
+            const options = { hour: 'numeric', minute: 'numeric', second: 'numeric', hour12: true };
+            const dateOptions = { day: 'numeric', month: 'short', year: 'numeric' };
+
+            // Format time for UTC
+            const utcFormattedTime = utcTime.toLocaleString('en-US', options);
+            const utcFormattedDate = utcTime.toLocaleString('en-US', dateOptions);
+
+            // Format time for UTC +6
+            const utcPlus6FormattedTime = utcPlus6Time.toLocaleString('en-US', options);
+            const utcPlus6FormattedDate = utcPlus6Time.toLocaleString('en-US', dateOptions);
+
+            // Update the HTML elements with the time
+            document.getElementById('utcTime').innerHTML = `UTC Time: ${utcFormattedTime}; ${utcFormattedDate}`;
+            document.getElementById('utcPlus6Time').innerHTML = `UTC+6 Time: ${utcPlus6FormattedTime}; ${utcPlus6FormattedDate}`;
+        }
+
+        // Update the time every second
+        setInterval(updateTime, 1000);
+
+        // Initial call to set the time immediately
+        updateTime();
+
+        // Close modal logic
+        document.getElementById("closeModalBtn").onclick = function () {
+            document.getElementById("popupModal").style.display = "none";
+            document.getElementById("modalBackdrop").style.display = "none";
+        };
+    </script>
+
 </body>
+
 </html>
