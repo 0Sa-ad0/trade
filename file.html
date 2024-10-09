@@ -101,8 +101,8 @@
 
     <!-- Time Display -->
     <div class="time-container">
-        <div class="time" id="utcPlus6Time">UTC+6 Time: </div>
         <div class="time" id="utcTime">UTC Time: </div>
+        <div class="time" id="utcPlus6Time">UTC +6 Time: </div>
     </div>
 
     <!-- TradingView Widget BEGIN -->
@@ -166,8 +166,8 @@
             const utcPlus6FormattedDate = utcPlus6Time.toLocaleString('en-US', dateOptions);
 
             // Update the HTML elements with the time
-            document.getElementById('utcTime').innerHTML = `UTC Time: ${utcFormattedTime}; ${utcFormattedDate}`;
-            document.getElementById('utcPlus6Time').innerHTML = `UTC+6 Time: ${utcPlus6FormattedTime}; ${utcPlus6FormattedDate}`;
+            document.getElementById('utcTime').innerHTML = `UTC+6 Time: ${utcFormattedTime}; ${utcFormattedDate}`;
+            document.getElementById('utcPlus6Time').innerHTML = `UTC Time: ${utcPlus6FormattedTime}; ${utcPlus6FormattedDate}`;
         }
 
         // Update the time every second
